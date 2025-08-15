@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -70,11 +71,20 @@ class _MainViewState extends State<MainView> {
     });
   }
 
-  void _printLines() {
-    selectedColor = Colors.blue;
+  void _printLines() async {
+    final tempLines = List<DrawingLine>.from(lines);
+    lines.clear();
+
+    //TODO: INSTEAD OF DRAWING AGAIN THE LINES DRAW THE POINTS TO SIMULATE THE PAINT ACTION
+    for (var i = 0; i < tempLines.length; i++) {
+      await Future.delayed(Duration(milliseconds: 800));
+      setState(() {
+        lines.add(tempLines[i]);
+      });
+    }
   }
 
-  void _undo() {
+  void _undo() async {
     if (lines.isNotEmpty) {
       lines.removeLast();
     }
@@ -152,7 +162,7 @@ class _DrawingPainter extends CustomPainter {
         ..color = selectedColor
         ..isAntiAlias = true
         ..strokeWidth = strokeWidth
-        ..strokeCap = StrokeCap.square;
+        ..strokeCap = StrokeCap.butt;
 
       for (int i = 0; i < tempPoints.length - 1; i++) {
         canvas.drawLine(tempPoints[i], tempPoints[i + 1], tempPaint);
