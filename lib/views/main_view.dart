@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:dibujitos/components/drawing_options.dart';
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screen_recorder/screen_recorder.dart';
@@ -109,21 +111,40 @@ class _MainViewState extends State<MainView> {
     final frames = await controller.exporter.exportGif();
     if (frames != null && frames.isNotEmpty) {
       try {
-        final directory = await getApplicationDocumentsDirectory();
+        final directory = await getDownloadsDirectory();
         final timestamp = DateTime.now().millisecondsSinceEpoch;
-        final filePath = '${directory.path}/drawing_$timestamp.gif'; // or .mp4 depending on format
 
-        final file = File(filePath);
-        await file.writeAsBytes(frames.cast<int>());
+        // Save GIF first
+        final gifPath = '${directory!.path}/drawing_$timestamp.mp4';
+        print(gifPath);
+        final gifFile = File(gifPath);
+        await gifFile.writeAsBytes(frames.cast<int>());
 
-        // Show success message
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Drawing saved to: $filePath')));
-        }
+        // // Convert GIF to MP4 using FFmpeg
+        // final mp4Path = '${directory.path}/drawing_$timestamp.mp4';
+        // final command =
+        //     '-i "$gifPath" -movflags +faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" "$mp4Path"';
+
+        // final session = await FFmpegKit.execute(command);
+        // final returnCode = await session.getReturnCode();
+
+        // if (ReturnCode.isSuccess(returnCode)) {
+        //   // Delete the temporary GIF file
+        //   await gifFile.delete();
+
+        //   if (mounted) {
+        //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Video saved to: $mp4Path')));
+        //   }
+        // } else {
+        //   if (mounted) {
+        //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to convert to MP4')));
+        //   }
+        // }
       } catch (e) {
         // Show error message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save: $e')));
+          print(e);
         }
       }
     }
