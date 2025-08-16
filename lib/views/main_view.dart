@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'dart:ui';
 
+import 'package:dibujitos/components/drawing_options.dart';
 import 'package:flutter/material.dart';
 
 class MainView extends StatefulWidget {
@@ -76,8 +76,9 @@ class _MainViewState extends State<MainView> {
     lines.clear();
 
     //TODO: INSTEAD OF DRAWING AGAIN THE LINES DRAW THE POINTS TO SIMULATE THE PAINT ACTION
+    //this wouldnt affet the  main behaviur of the app so we can store the points on a list that once we need it we use it to create the lines to show the 'drawing effect'
     for (var i = 0; i < tempLines.length; i++) {
-      await Future.delayed(Duration(milliseconds: 800));
+      await Future.delayed(Duration(milliseconds: 600));
       setState(() {
         lines.add(tempLines[i]);
       });
@@ -90,17 +91,44 @@ class _MainViewState extends State<MainView> {
     }
   }
 
+  void _delete() {
+    lines.clear();
+  }
+
+  void showDrawModal() {
+    //TODO: maybe use this to stablish the size of the canvas?
+    final height = MediaQuery.sizeOf(context).height;
+    showModalBottomSheet<void>(
+      context: context,
+      enableDrag: true,
+      builder: (BuildContext context) {
+        return CustomDialog();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 24),
+            SizedBox(height: 36),
             Container(
-              color: Colors.grey,
               height: 340,
               width: 340,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(0, 0, 0, 0.08),
+                    blurRadius: 12,
+                    spreadRadius: 0,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
               child: ClipRect(
                 child: GestureDetector(
                   onPanStart: _onTouchDown,
@@ -110,21 +138,41 @@ class _MainViewState extends State<MainView> {
                 ),
               ),
             ),
-            Row(spacing: 12, children: [Text("Undo"), Text("Erase"), Text("Delete"), Text("Options")]),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(onPressed: _printLines, child: Text("Save")),
-                ),
-              ],
+            SizedBox(height: 36),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 26),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                spacing: 12,
+                children: [
+                  IconButton.filled(onPressed: _undo, icon: Icon(Icons.undo)),
+                  IconButton.filled(onPressed: _delete, icon: Icon(Icons.delete)),
+                  IconButton.filled(onPressed: showDrawModal, icon: Icon(Icons.create)),
+                ],
+              ),
+            ),
+            SizedBox(height: 36),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 36),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(onPressed: _printLines, child: Text("Save")),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(onPressed: _undo, child: Text("Save")),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 36),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(onPressed: _undo, child: Text("Upload")),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -162,7 +210,7 @@ class _DrawingPainter extends CustomPainter {
         ..color = selectedColor
         ..isAntiAlias = true
         ..strokeWidth = strokeWidth
-        ..strokeCap = StrokeCap.butt;
+        ..strokeCap = StrokeCap.round;
 
       for (int i = 0; i < tempPoints.length - 1; i++) {
         canvas.drawLine(tempPoints[i], tempPoints[i + 1], tempPaint);
