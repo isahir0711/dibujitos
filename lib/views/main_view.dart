@@ -1,15 +1,11 @@
-import 'dart:io';
-import 'dart:ui';
-
+import 'dart:async';
 import 'package:dibujitos/components/drawing_options.dart';
 import 'package:dibujitos/services/custom_painter.dart';
 import 'package:dibujitos/viewmodels/main_view_mode.l.dart';
-import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:screen_recorder/screen_recorder.dart';
+import 'package:screenshot/screenshot.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key, required this.title});
@@ -24,7 +20,7 @@ class _MainViewState extends State<MainView> {
   double canvasHeight = 340;
   double canvasWidth = 340;
 
-  ScreenRecorderController controller = ScreenRecorderController();
+  ScreenshotController screenshotController = ScreenshotController();
 
   bool _isCreatingVideo = false;
 
@@ -40,6 +36,16 @@ class _MainViewState extends State<MainView> {
     );
   }
 
+  Future<void> saveImage() async {
+    final directory = (await getApplicationDocumentsDirectory()).path;
+    String fileName = DateTime.now().microsecondsSinceEpoch.toString();
+    try {
+      await screenshotController.captureAndSave(directory, fileName: fileName, pixelRatio: 5);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,10 +53,8 @@ class _MainViewState extends State<MainView> {
         child: Column(
           children: [
             SizedBox(height: 36),
-            ScreenRecorder(
-              controller: controller,
-              width: canvasHeight,
-              height: canvasWidth,
+            Screenshot(
+              controller: screenshotController,
               child: Container(
                 height: 340,
                 width: 340,
@@ -126,7 +130,7 @@ class _MainViewState extends State<MainView> {
               child: Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(onPressed: () {}, child: Text("Upload")),
+                    child: ElevatedButton(onPressed: saveImage, child: Text("Upload")),
                   ),
                 ],
               ),
