@@ -2,15 +2,17 @@ import 'package:dibujitos/services/custom_painter.dart';
 import 'package:flutter/material.dart';
 
 class MainViewModel extends ChangeNotifier {
+  static const double defSwi = 10;
+
   Color currentColor = Colors.black;
   List<Offset> tempPoints = [];
-  double strokeWidth = 12;
+  double strokeWidth = defSwi;
   List<DrawingLine> lines = [];
 
   var paintOptions = Paint()
     ..color = Colors.black
     ..isAntiAlias = true
-    ..strokeWidth = 12
+    ..strokeWidth = defSwi
     ..strokeCap = StrokeCap.round;
 
   changeColor(Color newColor) {
@@ -71,16 +73,16 @@ class MainViewModel extends ChangeNotifier {
     lines.clear();
 
     for (var i = 0; i < tempLines.length; i++) {
+      //TODO: drawing anim should be using the right colors
       for (var offset in tempLines[i].offsets) {
         await Future.delayed(Duration(milliseconds: 20));
         tempPoints.add(offset);
         notifyListeners();
       }
-
       final tempPaint = Paint()
-        ..color = currentColor
+        ..color = tempLines[i].paint.color
         ..isAntiAlias = true
-        ..strokeWidth = strokeWidth
+        ..strokeWidth = tempLines[i].paint.strokeWidth
         ..strokeCap = StrokeCap.round;
       final newLine = DrawingLine(List.from(tempPoints), tempPaint);
       lines.add(newLine);
