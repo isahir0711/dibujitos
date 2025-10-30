@@ -1,16 +1,18 @@
 # dibujitos
 
-A new Flutter project.
+simple app to create cute drawings
 
-## Getting Started
+## Current Functionalities
 
-This project is a starting point for a Flutter application.
+- Draw (duh)
+  - Undo, Delete and change Paint options
+- Store the drawing into the Download folder as a .PNG image
+- `re-draw` visualization
+  - Plan its to store the drawing info(lines,paint_details) in a db and be able to watch a simulation of how did we create the drawing
 
-A few resources to get you started if this is your first Flutter project:
+## Future
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- store the images in a different folder
+- store the lines in a db and watch a drawing simulation
+- add a view to visualize all of your drawings
+- add a view where you can draw with a friend using a code invite
