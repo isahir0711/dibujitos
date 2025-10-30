@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:path/path.dart' as p;
 
 class MainView extends StatefulWidget {
   const MainView({super.key, required this.title});
@@ -48,7 +49,8 @@ class _MainViewState extends State<MainView> {
     //TODO: move this to a separate function to get the correct dir
     var dir = Directory('');
     if (Platform.isAndroid) {
-      dir = Directory('/storage/emulated/0/Download/');
+      //TODO: create a folder for the drawings iunstead of using the Download one
+      dir = Directory("/storage/emulated/0/Download/");
     } else {
       final docsDir = await getApplicationDocumentsDirectory();
       dir = Directory(docsDir.path);
@@ -58,7 +60,9 @@ class _MainViewState extends State<MainView> {
     final bytes = await image.toByteData(format: ImageByteFormat.png);
     final pngBytes = await bytes!.buffer.asUint8List();
     //TODO: file name should be timestamp
-    File newFile = File('${dir}/demo.png');
+    String fileName = DateTime.now().microsecondsSinceEpoch.toString() + '.png';
+    String completedir = p.join(dir.path, fileName);
+    File newFile = File(completedir);
     try {
       await newFile.writeAsBytes(pngBytes);
     } catch (e) {
