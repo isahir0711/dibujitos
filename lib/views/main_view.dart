@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui';
 import 'package:dibujitos/components/drawing_options.dart';
 import 'package:dibujitos/services/custom_painter.dart';
 import 'package:dibujitos/viewmodels/main_view_mode.l.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -19,10 +24,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   double canvasHeight = 340;
   double canvasWidth = 340;
-
-  ScreenshotController screenshotController = ScreenshotController();
-
-  bool _isCreatingVideo = false;
+  var scr = GlobalKey();
 
   void showDrawModal() {
     //TODO: maybe use this to stablish the size of the canvas?
@@ -37,15 +39,34 @@ class _MainViewState extends State<MainView> {
   }
 
   Future<void> saveImage() async {
-    final directory = (await getApplicationDocumentsDirectory()).path;
-    String fileName = DateTime.now().microsecondsSinceEpoch.toString();
+    //not really sure if we need this, if not delete the Manifest User permissions as well
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      // If not we will ask for permission first
+      await Permission.storage.request();
+    }
+    //TODO: move this to a separate function to get the correct dir
+    var dir = Directory('');
+    if (Platform.isAndroid) {
+      dir = Directory('/storage/emulated/0/Download/');
+    } else {
+      final docsDir = await getApplicationDocumentsDirectory();
+      dir = Directory(docsDir.path);
+    }
+    RenderRepaintBoundary boundary = scr.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    var image = await boundary.toImage(pixelRatio: 3);
+    final bytes = await image.toByteData(format: ImageByteFormat.png);
+    final pngBytes = await bytes!.buffer.asUint8List();
+    //TODO: file name should be timestamp
+    File newFile = File('${dir}/demo.png');
     try {
-      await screenshotController.captureAndSave(directory, fileName: fileName, pixelRatio: 5);
+      await newFile.writeAsBytes(pngBytes);
     } catch (e) {
       print(e);
     }
   }
 
+  //TODO: create components for the different sections of the view
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,8 +74,8 @@ class _MainViewState extends State<MainView> {
         child: Column(
           children: [
             SizedBox(height: 36),
-            Screenshot(
-              controller: screenshotController,
+            RepaintBoundary(
+              key: scr,
               child: Container(
                 height: 340,
                 width: 340,
@@ -78,12 +99,7 @@ class _MainViewState extends State<MainView> {
                         onPanUpdate: viewmodel.onTouchMove,
                         onPanEnd: viewmodel.onTouchEnd,
                         child: CustomPaint(
-                          painter: DrawingPainter(
-                            viewmodel.lines,
-                            viewmodel.tempPoints,
-                            _isCreatingVideo,
-                            viewmodel.paintOptions,
-                          ),
+                          painter: DrawingPainter(viewmodel.lines, viewmodel.tempPoints, viewmodel.paintOptions),
                         ),
                       ),
                     );

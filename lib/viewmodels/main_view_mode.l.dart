@@ -1,6 +1,5 @@
-import 'dart:developer';
-
-import 'package:dibujitos/services/custom_painter.dart';
+import 'dart:convert';
+import 'package:dibujitos/models/drawing.dart';
 import 'package:flutter/material.dart';
 
 class MainViewModel extends ChangeNotifier {
@@ -72,6 +71,8 @@ class MainViewModel extends ChangeNotifier {
     //We can save the lines and be able to do the drawing effect at any moment
 
     final tempLines = List<DrawingLine>.from(lines);
+    final json = jsonEncode(tempLines.map((line) => line.toJson()).toList());
+    print(json);
 
     lines.clear();
 

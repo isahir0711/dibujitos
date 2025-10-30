@@ -1,14 +1,14 @@
 import 'dart:ui';
 
+import 'package:dibujitos/models/drawing.dart';
 import 'package:flutter/material.dart';
 
 class DrawingPainter extends CustomPainter {
   final List<DrawingLine> lines;
   final List<Offset> tempPoints;
-  final bool creatingVideo;
   final Paint paintOptions;
 
-  DrawingPainter(this.lines, this.tempPoints, this.creatingVideo, this.paintOptions);
+  DrawingPainter(this.lines, this.tempPoints, this.paintOptions);
 
   List<Offset> offsetsList = [];
 
@@ -37,18 +37,4 @@ class DrawingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
-
-class DrawingPoint {
-  Offset offset;
-  Paint paint;
-
-  DrawingPoint(this.offset, this.paint);
-}
-
-class DrawingLine {
-  List<Offset> offsets;
-  Paint paint;
-
-  DrawingLine(this.offsets, this.paint);
 }
