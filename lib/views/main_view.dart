@@ -11,7 +11,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:path/path.dart' as p;
 
 class MainView extends StatefulWidget {
   const MainView({super.key, required this.title});
@@ -37,37 +36,6 @@ class _MainViewState extends State<MainView> {
         return CustomDialog();
       },
     );
-  }
-
-  Future<void> saveImage() async {
-    //not really sure if we need this, if not delete the Manifest User permissions as well
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      // If not we will ask for permission first
-      await Permission.storage.request();
-    }
-    //TODO: move this to a separate function to get the correct dir
-    var dir = Directory('');
-    if (Platform.isAndroid) {
-      //TODO: create a folder for the drawings iunstead of using the Download one
-      dir = Directory("/storage/emulated/0/Download/");
-    } else {
-      final docsDir = await getApplicationDocumentsDirectory();
-      dir = Directory(docsDir.path);
-    }
-    RenderRepaintBoundary boundary = scr.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    var image = await boundary.toImage(pixelRatio: 3);
-    final bytes = await image.toByteData(format: ImageByteFormat.png);
-    final pngBytes = await bytes!.buffer.asUint8List();
-    //TODO: file name should be timestampqq
-    String fileName = DateTime.now().microsecondsSinceEpoch.toString() + '.png';
-    String completedir = p.join(dir.path, fileName);
-    File newFile = File(completedir);
-    try {
-      await newFile.writeAsBytes(pngBytes);
-    } catch (e) {
-      print(e);
-    }
   }
 
   //TODO: create components for the different sections of the view
@@ -150,7 +118,16 @@ class _MainViewState extends State<MainView> {
               child: Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(onPressed: saveImage, child: Text("Upload")),
+                    child: Consumer<MainViewModel>(
+                      builder: (context, value, child) {
+                        return ElevatedButton(
+                          onPressed: () async {
+                            await value.saveImage(scr);
+                          },
+                          child: Text("Upload"),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

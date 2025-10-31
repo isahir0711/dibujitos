@@ -1,6 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:ui';
 import 'package:dibujitos/models/drawing.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path/path.dart' as p;
 
 class MainViewModel extends ChangeNotifier {
   static const double defSwi = 10;
@@ -72,7 +78,14 @@ class MainViewModel extends ChangeNotifier {
 
     final tempLines = List<DrawingLine>.from(lines);
     final json = jsonEncode(tempLines.map((line) => line.toJson()).toList());
+    print("JSON****************************");
     print(json);
+
+    final encodedJson = utf8.encode(json);
+    final gZipJson = gzip.encode(encodedJson);
+    print("encoded ziped json*********************************");
+    final base64json = base64.encode(gZipJson);
+    print(base64json);
 
     lines.clear();
 
@@ -98,6 +111,37 @@ class MainViewModel extends ChangeNotifier {
       lines.add(newLine);
       tempPoints.clear();
       notifyListeners();
+    }
+  }
+
+  Future<void> saveImage(GlobalKey scr) async {
+    //not really sure if we need this, if not delete the Manifest User permissions as well
+    // var status = await Permission.storage.status;
+    // if (!status.isGranted) {
+    //   // If not we will ask for permission first
+    //   await Permission.storage.request();
+    // }
+    //TODO: move this to a separate function to get the correct dir
+    var dir = Directory('');
+    if (Platform.isAndroid) {
+      //TODO: create a folder for the drawings iunstead of usfied ing the Download one
+      dir = Directory("/storage/emulated/0/Download/");
+    } else {
+      final docsDir = await getApplicationDocumentsDirectory();
+      dir = Directory(docsDir.path);
+    }
+    RenderRepaintBoundary boundary = scr.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    var image = await boundary.toImage(pixelRatio: 3);
+    final bytes = await image.toByteData(format: ImageByteFormat.png);
+    final pngBytes = await bytes!.buffer.asUint8List();
+    //TODO: file name should be timestampqq
+    String fileName = DateTime.now().microsecondsSinceEpoch.toString() + '.png';
+    String completedir = p.join(dir.path, fileName);
+    File newFile = File(completedir);
+    try {
+      await newFile.writeAsBytes(pngBytes);
+    } catch (e) {
+      print(e);
     }
   }
 }
