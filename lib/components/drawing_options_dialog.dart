@@ -2,16 +2,16 @@ import 'package:dibujitos/viewmodels/main_view_mode.l.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CustomDialog extends StatefulWidget {
+class DrawingOptionsDialog extends StatefulWidget {
   final Function(Color, double)? onSelectionChanged;
 
-  const CustomDialog({super.key, this.onSelectionChanged});
+  const DrawingOptionsDialog({super.key, this.onSelectionChanged});
 
   @override
-  State<CustomDialog> createState() => _CustomDialogState();
+  State<DrawingOptionsDialog> createState() => _DrawingOptionsDialogState();
 }
 
-class _CustomDialogState extends State<CustomDialog> {
+class _DrawingOptionsDialogState extends State<DrawingOptionsDialog> {
   double _currentSliderValue = 5.0; // Default brush size
 
   // Expanded color palette similar to the image

@@ -5,7 +5,6 @@ import 'package:dibujitos/models/drawing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as p;
 
 class MainViewModel extends ChangeNotifier {
@@ -16,11 +15,17 @@ class MainViewModel extends ChangeNotifier {
   double strokeWidth = defSwi;
   List<DrawingLine> lines = [];
 
+  GlobalKey paintKey = GlobalKey();
+
   var paintOptions = Paint()
     ..color = Colors.black
     ..isAntiAlias = true
     ..strokeWidth = defSwi
     ..strokeCap = StrokeCap.round;
+
+  setSCR(GlobalKey key) {
+    paintKey = key;
+  }
 
   changeColor(Color newColor) {
     currentColor = newColor;
@@ -73,14 +78,12 @@ class MainViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  printLines() async {
+  Future<void> printLines() async {
+    print("DRAWING SIMULTAION");
     //We can save the lines and be able to do the drawing effect at any moment
 
     final tempLines = List<DrawingLine>.from(lines);
     final json = jsonEncode(tempLines.map((line) => line.toJson()).toList());
-    print("JSON****************************");
-    print(json);
-
     final encodedJson = utf8.encode(json);
     final gZipJson = gzip.encode(encodedJson);
     print("encoded ziped json*********************************");
@@ -114,7 +117,8 @@ class MainViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> saveImage(GlobalKey scr) async {
+  Future<void> saveImage() async {
+    print("SAVING IMAGE");
     //not really sure if we need this, if not delete the Manifest User permissions as well
     // var status = await Permission.storage.status;
     // if (!status.isGranted) {
@@ -122,6 +126,7 @@ class MainViewModel extends ChangeNotifier {
     //   await Permission.storage.request();
     // }
     //TODO: move this to a separate function to get the correct dir
+
     var dir = Directory('');
     if (Platform.isAndroid) {
       //TODO: create a folder for the drawings iunstead of usfied ing the Download one
@@ -130,7 +135,7 @@ class MainViewModel extends ChangeNotifier {
       final docsDir = await getApplicationDocumentsDirectory();
       dir = Directory(docsDir.path);
     }
-    RenderRepaintBoundary boundary = scr.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    RenderRepaintBoundary boundary = paintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage(pixelRatio: 3);
     final bytes = await image.toByteData(format: ImageByteFormat.png);
     final pngBytes = await bytes!.buffer.asUint8List();
