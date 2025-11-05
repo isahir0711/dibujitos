@@ -24,9 +24,23 @@ class _MainViewState extends State<MainView> {
     super.initState();
   }
 
+  void navigate(int v) {
+    bool hasKey = routes.containsKey(v);
+    String route = hasKey ? routes[v]! : '/';
+    print(route);
+    Navigator.pushNamed(context, route);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (value) => {navigate(value)},
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.draw), label: 'Drawings'),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -61,3 +75,5 @@ class _MainViewState extends State<MainView> {
     );
   }
 }
+
+Map<int, String> routes = {0: '/', 1: '/drawings'};

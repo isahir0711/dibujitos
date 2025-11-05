@@ -1,4 +1,5 @@
 import 'package:dibujitos/viewmodels/main_view_mode.l.dart';
+import 'package:dibujitos/views/drawings_view.dart';
 import 'package:dibujitos/views/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue)),
-      home: const MainView(title: 'Flutter Demo Home Page'),
+      home: const MainView(title: 'Home'),
+      routes: {'/drawings': (context) => DrawingsView()},
     );
   }
 }

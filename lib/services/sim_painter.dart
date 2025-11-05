@@ -3,23 +3,13 @@ import 'dart:ui';
 import 'package:dibujitos/models/drawing.dart';
 import 'package:flutter/material.dart';
 
-class DrawingPainter extends CustomPainter {
+class SimPainter extends CustomPainter {
   final List<DrawingLine> lines;
-  final List<Offset> tempPoints;
-  final Paint paintOptions;
 
-  DrawingPainter(this.lines, this.tempPoints, this.paintOptions);
+  SimPainter(this.lines);
 
   @override
   void paint(Canvas canvas, Size size) async {
-    if (tempPoints.length > 1) {
-      for (int i = 0; i < tempPoints.length - 1; i++) {
-        canvas.drawLine(tempPoints[i], tempPoints[i + 1], paintOptions);
-      }
-    }
-
-    // Draw completed lines
-
     for (DrawingLine line in lines) {
       if (line.offsets.length > 1) {
         // Draw connected lines
