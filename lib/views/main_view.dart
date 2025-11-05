@@ -42,17 +42,17 @@ class _MainViewState extends State<MainView> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 36),
-            DrawingSection(scr: scr),
-            SizedBox(height: 36),
-            DrawingTools(),
-            SizedBox(height: 36),
-            // this can be do better, the whole "div" should have a padding x
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 36),
-              child: Column(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              SizedBox(height: 36),
+              DrawingSection(scr: scr),
+              SizedBox(height: 36),
+              DrawingTools(),
+              SizedBox(height: 36),
+              // this can be do better, the whole "div" should have a padding x
+              Column(
                 children: [
                   SizedBox(height: 16),
                   Consumer<MainViewModel>(
@@ -68,8 +68,8 @@ class _MainViewState extends State<MainView> {
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

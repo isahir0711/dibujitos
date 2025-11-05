@@ -18,6 +18,10 @@ class _CustomButtonState extends State<CustomButton> {
       children: [
         Expanded(
           child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.all(16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(8)),
+            ),
             onPressed: !widget.isAsync ? widget.action : () async => {await widget.asyncAction},
             child: Text(widget.label),
           ),

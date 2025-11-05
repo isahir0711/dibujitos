@@ -5,11 +5,18 @@ import 'package:flutter/material.dart';
 
 class SimPainter extends CustomPainter {
   final List<DrawingLine> lines;
+  final List<Offset> tempPoints;
+  final Paint paintOptions;
 
-  SimPainter(this.lines);
+  SimPainter(this.lines, this.tempPoints, this.paintOptions);
 
   @override
   void paint(Canvas canvas, Size size) async {
+    for (int i = 0; i < tempPoints.length - 1; i++) {
+      canvas.drawLine(tempPoints[i], tempPoints[i + 1], paintOptions);
+    }
+    // Draw completed lines
+
     for (DrawingLine line in lines) {
       if (line.offsets.length > 1) {
         // Draw connected lines

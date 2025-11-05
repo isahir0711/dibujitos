@@ -13,7 +13,7 @@ class DrawingTools extends StatefulWidget {
 class _DrawingToolsState extends State<DrawingTools> {
   void showDrawModal() {
     //TODO: maybe use this to stablish the size of the canvas?
-    final height = MediaQuery.sizeOf(context).height;
+    // final height = MediaQuery.sizeOf(context).height;
     showModalBottomSheet<void>(
       context: context,
       enableDrag: true,
@@ -30,7 +30,7 @@ class _DrawingToolsState extends State<DrawingTools> {
       child: Consumer<MainViewModel>(
         builder: (context, viewmodel, child) {
           return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             spacing: 12,
             children: [
               IconButton.filled(onPressed: viewmodel.undo, icon: Icon(Icons.undo)),
