@@ -1,4 +1,4 @@
-import 'package:dibujitos/components/sim_sections.dart';
+import 'package:dibujitos/components/sim_section.dart';
 import 'package:dibujitos/viewmodels/main_view_mode.l.dart';
 import 'package:dibujitos/views/main_view.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +11,6 @@ class DrawingsView extends StatefulWidget {
   State<DrawingsView> createState() => DrawingsViewState();
 }
 
-//TODO: MOVE THIS TO VIEW MODEL
-// ONCE TAPED THE VIEW MODEL CHANGES THE current drawing
 class DrawingsViewState extends State<DrawingsView> {
   void navigate(int v) {
     bool hasKey = routes.containsKey(v);
@@ -20,19 +18,6 @@ class DrawingsViewState extends State<DrawingsView> {
     print(route);
     Navigator.pushNamed(context, route);
   }
-
-  @override
-  void initState() {
-    // String demo = Provider.of<MainViewModel>(context, listen: false).drawingsData[0];
-    // print(demo);
-    super.initState();
-  }
-
-  // _changeSelected(int index) {
-  //   setState(() {
-  //     selected = drawingsData[index];
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -45,37 +30,51 @@ class DrawingsViewState extends State<DrawingsView> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Provider.of<MainViewModel>(context, listen: false).currDrawing != ""
-                ? Consumer<MainViewModel>(
-                    builder: (context, value, child) {
-                      return SimSection(drawingData: value.currDrawing);
-                    },
-                  )
-                : Text("NO drawings"),
-            Row(children: [Text("Here you could pick the drawing to render")]),
-            Expanded(
-              child: Provider.of<MainViewModel>(context, listen: true).drawingsData.isNotEmpty
-                  ? Consumer<MainViewModel>(
-                      builder: (context, value, child) {
-                        return ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return Divider();
-                          },
-                          itemCount: value.drawingsData.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () => value.changePrev(index),
-                              child: Container(color: Colors.amber, child: Text(value.drawingsData[index])),
-                            );
-                          },
-                        );
-                      },
-                    )
-                  : Text("dude"),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            spacing: 12,
+            children: [
+              SimSection(),
+              Expanded(
+                child: Provider.of<MainViewModel>(context, listen: true).drawingsData.isNotEmpty
+                    ? Consumer<MainViewModel>(
+                        builder: (context, value, child) {
+                          return ListView.separated(
+                            separatorBuilder: (context, index) {
+                              return SizedBox(height: 12);
+                            },
+                            itemCount: value.drawingsData.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () => value.changePrev(index),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Color.fromRGBO(0, 0, 0, 0.08),
+                                        blurRadius: 12,
+                                        spreadRadius: 0,
+                                        offset: Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+                                    child: Text(index.toString()),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      )
+                    : Text("you dont have drawings yet"),
+              ),
+            ],
+          ),
         ),
       ),
     );
