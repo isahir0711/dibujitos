@@ -33,9 +33,22 @@ class _DrawingToolsState extends State<DrawingTools> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             spacing: 12,
             children: [
-              IconButton.filled(onPressed: viewmodel.undo, icon: Icon(Icons.undo)),
-              IconButton.filled(onPressed: viewmodel.delete, icon: Icon(Icons.delete)),
-              IconButton.filled(onPressed: showDrawModal, icon: Icon(Icons.create)),
+              //TODO: Create a ui component for reutilization
+              IconButton.filled(
+                onPressed: viewmodel.undo,
+                icon: Icon(Icons.undo),
+                style: IconButton.styleFrom(backgroundColor: Color.fromARGB(255, 255, 146, 38)),
+              ),
+              IconButton.filled(
+                onPressed: viewmodel.delete,
+                icon: Icon(Icons.delete),
+                style: IconButton.styleFrom(backgroundColor: Color.fromARGB(255, 255, 146, 38)),
+              ),
+              IconButton.filled(
+                onPressed: showDrawModal,
+                icon: Icon(Icons.color_lens),
+                style: IconButton.styleFrom(backgroundColor: Color.fromARGB(255, 255, 146, 38)),
+              ),
             ],
           );
         },

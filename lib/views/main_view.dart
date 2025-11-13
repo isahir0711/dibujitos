@@ -34,7 +34,11 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 254, 255, 223),
       bottomNavigationBar: BottomNavigationBar(
+        selectedLabelStyle: TextStyle(color: Colors.amber),
+        unselectedLabelStyle: TextStyle(color: Colors.red),
+        backgroundColor: Color.fromARGB(255, 255, 231, 154),
         onTap: (value) => {navigate(value)},
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
