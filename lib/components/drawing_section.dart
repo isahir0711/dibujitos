@@ -22,6 +22,7 @@ class DrawingSection extends StatelessWidget {
             BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.08), blurRadius: 12, spreadRadius: 0, offset: Offset(0, 4)),
           ],
         ),
+        //TODO: THIS ONLY CLIPS THE PAINTER BUT YOU CAN STILL DRAW OUTSIDE THE PAINTER
         child: Consumer<MainViewModel>(
           builder: (context, viewmodel, child) {
             return ClipRect(

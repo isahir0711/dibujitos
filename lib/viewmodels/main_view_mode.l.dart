@@ -137,6 +137,7 @@ class MainViewModel extends ChangeNotifier {
 
   Future<void> saveImage() async {
     if (lines.isEmpty) {
+      print("bro");
       return;
     }
 

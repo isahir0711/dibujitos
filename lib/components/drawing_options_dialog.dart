@@ -52,7 +52,8 @@ class _DrawingOptionsDialogState extends State<DrawingOptionsDialog> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height;
-    return SizedBox(
+    return Container(
+      color: Color.fromARGB(255, 254, 255, 223),
       height: height / 2,
       child: Center(
         child: Column(
@@ -120,6 +121,7 @@ class _DrawingOptionsDialogState extends State<DrawingOptionsDialog> {
                   const Text('1', style: TextStyle(fontSize: 12)),
                   Expanded(
                     child: Slider(
+                      activeColor: Color.fromARGB(255, 255, 169, 82),
                       //TODO : USE CONSUMER INSTEAD
                       value: Provider.of<MainViewModel>(context, listen: true).strokeWidth,
                       min: 1,
